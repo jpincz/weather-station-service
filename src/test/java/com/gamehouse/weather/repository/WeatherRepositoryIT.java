@@ -43,4 +43,43 @@ class WeatherRepositoryIT extends BaseTest {
         assertThat(found.getWindSpeed()).isEqualTo(1.3);
     }
 
+    @Test
+    void testFindFirstByStationCodeOrderByReceivedAtDesc() {
+        String stationCode = "ABC";
+        LocalDateTime now = LocalDateTime.now();
+
+        Weather weather1 = new Weather();
+        weather1.setStationCode(stationCode);
+        weather1.setCollectedAt(now.minusMinutes(10));
+        weather1.setReceivedAt(now.minusMinutes(10));
+        weather1.setTemperature(20.0);
+        weather1.setHumidity(50.0);
+        weather1.setWindSpeed(5.0);
+        repository.save(weather1);
+
+        Weather weather2 = new Weather();
+        weather2.setStationCode(stationCode);
+        weather2.setCollectedAt(now.minusMinutes(5));
+        weather2.setReceivedAt(now.minusMinutes(5));
+        weather2.setTemperature(22.0);
+        weather2.setHumidity(55.0);
+        weather2.setWindSpeed(6.0);
+        repository.save(weather2);
+
+        Weather weather3 = new Weather();
+        weather3.setStationCode(stationCode);
+        weather3.setCollectedAt(now.minusMinutes(1));
+        weather3.setReceivedAt(now);
+        weather3.setTemperature(24.0);
+        weather3.setHumidity(60.0);
+        weather3.setWindSpeed(7.0);
+        repository.save(weather3);
+
+        Optional<Weather> lastOpt = repository.findFirstByStationCodeOrderByReceivedAtDesc(stationCode);
+
+        assertThat(lastOpt).isPresent();
+        Weather last = lastOpt.get();
+        assertThat(last.getReceivedAt()).isEqualTo(now);
+        assertThat(last.getTemperature()).isEqualTo(24.0);
+    }
 }
