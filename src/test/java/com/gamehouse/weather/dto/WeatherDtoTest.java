@@ -1,6 +1,5 @@
 package com.gamehouse.weather.dto;
 
-import com.gamehouse.weather.BaseTest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -16,7 +15,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class WeatherDtoTest extends BaseTest {
+public class WeatherDtoTest {
 
     private static Validator validator;
 

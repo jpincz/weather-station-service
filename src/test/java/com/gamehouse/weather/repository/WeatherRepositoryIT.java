@@ -1,18 +1,16 @@
 package com.gamehouse.weather.repository;
 
-import com.gamehouse.weather.BaseTest;
+import com.gamehouse.weather.BaseIT;
 import com.gamehouse.weather.model.Weather;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DataJpaTest
-class WeatherRepositoryIT extends BaseTest {
+class WeatherRepositoryIT extends BaseIT {
 
     @Autowired
     private WeatherRepository repository;

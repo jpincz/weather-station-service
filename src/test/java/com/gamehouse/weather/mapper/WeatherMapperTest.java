@@ -1,6 +1,5 @@
 package com.gamehouse.weather.mapper;
 
-import com.gamehouse.weather.BaseTest;
 import com.gamehouse.weather.dto.WeatherDto;
 import com.gamehouse.weather.model.Weather;
 import org.junit.jupiter.api.Test;
@@ -10,7 +9,7 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class WeatherMapperTest extends BaseTest {
+class WeatherMapperTest {
 
     private final WeatherMapper mapper = Mappers.getMapper(WeatherMapper.class);
 

@@ -1,6 +1,5 @@
 package com.gamehouse.weather.service;
 
-import com.gamehouse.weather.BaseTest;
 import com.gamehouse.weather.dto.WeatherDto;
 import com.gamehouse.weather.mapper.WeatherMapper;
 import com.gamehouse.weather.model.Weather;
@@ -21,7 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class WeatherServiceTest extends BaseTest {
+class WeatherServiceTest {
 
     @Mock
     private WeatherRepository repository;

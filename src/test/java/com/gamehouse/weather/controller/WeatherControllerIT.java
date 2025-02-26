@@ -1,10 +1,9 @@
 package com.gamehouse.weather.controller;
 
-import com.gamehouse.weather.BaseTest;
+import com.gamehouse.weather.BaseIT;
 import com.gamehouse.weather.dto.WeatherDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
@@ -15,8 +14,7 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class WeatherControllerIT extends BaseTest {
+class WeatherControllerIT extends BaseIT {
 
     private static final String WEATHER_ENTRIES_PATH = "/weather";
 
