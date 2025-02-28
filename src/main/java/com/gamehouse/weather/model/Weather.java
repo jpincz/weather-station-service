@@ -18,7 +18,6 @@ public class Weather {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include
     private Long id;
 
     @NotNull(message = "Station code is required")
@@ -30,7 +29,6 @@ public class Weather {
     @Column(nullable = false)
     private LocalDateTime collectedAt;
 
-    @NotNull(message = "Received time is required")
     @Column(nullable = false)
     private LocalDateTime receivedAt;
 

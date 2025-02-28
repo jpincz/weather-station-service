@@ -61,13 +61,12 @@ public class WeatherTest {
         Weather weather = new Weather();
 
         Set<ConstraintViolation<Weather>> violations = validator.validate(weather);
-        assertThat(violations).hasSize(6);
+        assertThat(violations).hasSize(5);
         assertThat(violations)
                 .extracting(v -> v.getPropertyPath().toString())
                 .containsExactlyInAnyOrder(
                         "stationCode",
                         "collectedAt",
-                        "receivedAt",
                         "temperature",
                         "humidity",
                         "windSpeed"
