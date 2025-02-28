@@ -10,6 +10,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/weather
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
+      - ALERT_TEMPERATURE_THRESHOLD=40
     ports:
       - "8087:8087"
 
