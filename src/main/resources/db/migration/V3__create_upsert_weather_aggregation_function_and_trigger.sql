@@ -1,7 +1,7 @@
 CREATE
 OR REPLACE FUNCTION upsert_weather_aggregation(
     p_station_code VARCHAR,
-    p_collected_at TIMESTAMP
+    p_collected_at TIMESTAMPTZ
 )
 RETURNS VOID AS $$
 
@@ -20,22 +20,23 @@ INSERT INTO weather_aggregation (station_code,
                                  min_wind_speed,
                                  max_wind_speed)
 SELECT w.station_code,
-       date_trunc('minute', p_collected_at) AS minute_window,
-       count(*)                             AS total_records,
-       avg(w.temperature)                   AS avg_temperature,
-       min(w.temperature)                   AS min_temperature,
-       max(w.temperature)                   AS max_temperature,
-       avg(w.humidity)                      AS avg_humidity,
-       min(w.humidity)                      AS min_humidity,
-       max(w.humidity)                      AS max_humidity,
-       avg(w.wind_speed)                    AS avg_wind_speed,
-       min(w.wind_speed)                    AS min_wind_speed,
-       max(w.wind_speed)                    AS max_wind_speed
+       date_trunc('minute', p_collected_at AT TIME ZONE 'UTC') AS minute_window,
+       count(*)                                                AS total_records,
+       avg(w.temperature)                                      AS avg_temperature,
+       min(w.temperature)                                      AS min_temperature,
+       max(w.temperature)                                      AS max_temperature,
+       avg(w.humidity)                                         AS avg_humidity,
+       min(w.humidity)                                         AS min_humidity,
+       max(w.humidity)                                         AS max_humidity,
+       avg(w.wind_speed)                                       AS avg_wind_speed,
+       min(w.wind_speed)                                       AS min_wind_speed,
+       max(w.wind_speed)                                       AS max_wind_speed
 
 FROM weather w
 WHERE w.station_code = p_station_code
-  AND w.collected_at >= date_trunc('minute', p_collected_at)
-  AND w.collected_at < date_trunc('minute', p_collected_at) + interval '1 minute'
+  AND w.collected_at AT TIME ZONE 'UTC' >= date_trunc('minute', p_collected_at AT TIME ZONE 'UTC')
+    AND w.collected_at AT TIME ZONE 'UTC' < date_trunc('minute', p_collected_at AT TIME ZONE 'UTC') +
+    interval '1 minute'
 GROUP BY w.station_code, minute_window
 
 ON CONFLICT (station_code, minute_window) DO

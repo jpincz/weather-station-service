@@ -12,7 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +36,7 @@ class WeatherServiceTest {
     void save_Valid_ShouldReturnDto() {
         WeatherRequest request = new WeatherRequest(
                 "ABC",
-                LocalDateTime.now().minusMinutes(10),
+                OffsetDateTime.now().minusMinutes(10),
                 25.0,
                 50.0,
                 10.0
@@ -54,7 +54,7 @@ class WeatherServiceTest {
                 1L,
                 request.getStationCode(),
                 request.getCollectedAt(),
-                LocalDateTime.now(),
+                OffsetDateTime.now(),
                 request.getTemperature(),
                 request.getHumidity(),
                 request.getWindSpeed()
@@ -93,7 +93,7 @@ class WeatherServiceTest {
     void save_InvalidCollectedAtField_ShouldThrowException() {
         WeatherRequest request = new WeatherRequest(
                 "ABC",
-                LocalDateTime.now().plusMinutes(10),
+                OffsetDateTime.now().plusMinutes(10),
                 25.0,
                 50.0,
                 10.0
@@ -107,8 +107,8 @@ class WeatherServiceTest {
     @Test
     void getLastByStation_Existing_ShouldReturnDto() {
         String stationCode = "ABC";
-        LocalDateTime collectedAt = LocalDateTime.now().minusMinutes(15);
-        LocalDateTime receivedAt = LocalDateTime.now();
+        OffsetDateTime collectedAt = OffsetDateTime.now().minusMinutes(15);
+        OffsetDateTime receivedAt = OffsetDateTime.now();
         Weather weather = new Weather(
                 1L,
                 stationCode,

@@ -8,7 +8,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public class WeatherAlertService {
     @Scheduled(cron = EVERY_THIRTY_SECONDS_CRON)
     public void alertMissingData() {
         List<String> stationCodes = weatherRepository.findAllDistinctStationCodes();
-        LocalDateTime currentTime = LocalDateTime.now();
+        OffsetDateTime currentTime = OffsetDateTime.now();
         List<String> missingStations = new ArrayList<>();
 
         for (String stationCode : stationCodes) {
@@ -58,7 +58,7 @@ public class WeatherAlertService {
         if (thresholdProp != null) {
             double temperatureThreshold = Double.parseDouble(thresholdProp);
 
-            LocalDateTime currentTime = LocalDateTime.now();
+            OffsetDateTime currentTime = OffsetDateTime.now();
             List<String> stationCodes = weatherRepository.findAllDistinctStationCodes();
 
             for (String stationCode : stationCodes) {

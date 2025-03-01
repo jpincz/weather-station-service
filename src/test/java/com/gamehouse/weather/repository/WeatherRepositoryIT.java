@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +24,7 @@ class WeatherRepositoryIT extends BaseIT {
 
     @Test
     void testSaveAndFindById() {
-        LocalDateTime now = LocalDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now();
         Weather weather = new Weather();
         weather.setStationCode("ABC");
         weather.setCollectedAt(now.minusMinutes(5));
@@ -51,7 +51,7 @@ class WeatherRepositoryIT extends BaseIT {
     @Test
     void testFindFirstByStationCodeOrderByReceivedAtDesc() {
         String stationCode = "ABC";
-        LocalDateTime now = LocalDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now();
 
         Weather weather1 = new Weather();
         weather1.setStationCode(stationCode);
@@ -90,7 +90,7 @@ class WeatherRepositoryIT extends BaseIT {
 
     @Test
     void testFindAllDistinctStationCodes() {
-        LocalDateTime now = LocalDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now();
 
         Weather weather1 = new Weather();
         weather1.setStationCode("ABC");
@@ -126,9 +126,9 @@ class WeatherRepositoryIT extends BaseIT {
     @Test
     void testFindStationAverageTemperatureBetween() {
         String stationCode = "GHI";
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime start = now.minusMinutes(30);
-        LocalDateTime end = now;
+        OffsetDateTime now = OffsetDateTime.now();
+        OffsetDateTime start = now.minusMinutes(30);
+        OffsetDateTime end = now;
 
         Weather weather1 = new Weather();
         weather1.setStationCode(stationCode);

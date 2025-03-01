@@ -7,7 +7,7 @@ import com.gamehouse.weather.model.Weather;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,8 +20,8 @@ class WeatherMapperTest {
         Weather entity = new Weather();
         entity.setId(1L);
         entity.setStationCode("ABC");
-        entity.setCollectedAt(LocalDateTime.now().minusMinutes(5));
-        entity.setReceivedAt(LocalDateTime.now());
+        entity.setCollectedAt(OffsetDateTime.now().minusMinutes(5));
+        entity.setReceivedAt(OffsetDateTime.now());
         entity.setTemperature(25.5);
         entity.setHumidity(60.0);
         entity.setWindSpeed(12.3);
@@ -42,7 +42,7 @@ class WeatherMapperTest {
     void shouldMapDtoToEntity() {
         WeatherRequest dto = new WeatherRequest(
                 "ABC",
-                LocalDateTime.now().minusMinutes(5),
+                OffsetDateTime.now().minusMinutes(5),
                 25.5,
                 60.0,
                 12.3

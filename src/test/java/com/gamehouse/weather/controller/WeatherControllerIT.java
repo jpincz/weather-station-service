@@ -13,7 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
@@ -47,12 +49,16 @@ class WeatherControllerIT extends BaseIT {
                 .toUriString();
     }
 
-    private String buildAggregationUriForStationRange(String stationCode, LocalDateTime start, LocalDateTime end) {
+    private String buildAggregationUriForStationRange(String stationCode, OffsetDateTime start, OffsetDateTime end) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        String startStr = start.withOffsetSameInstant(ZoneOffset.UTC).format(formatter);
+        String endStr = end.withOffsetSameInstant(ZoneOffset.UTC).format(formatter);
+
         return UriComponentsBuilder.fromUriString(buildBaseUri())
                 .pathSegment(stationCode, "range")
-                .queryParam("start", start)
-                .queryParam("end", end)
-                .build()
+                .queryParam("start", startStr)
+                .queryParam("end", endStr)
+                .build(true)
                 .toUriString();
     }
 
@@ -61,8 +67,8 @@ class WeatherControllerIT extends BaseIT {
         WeatherResponse validDto = new WeatherResponse(
                 null,
                 "ABC",
-                LocalDateTime.now().minusMinutes(10),
-                LocalDateTime.now(),
+                OffsetDateTime.now().minusMinutes(10),
+                OffsetDateTime.now(),
                 25.0,
                 50.0,
                 10.0
@@ -83,7 +89,7 @@ class WeatherControllerIT extends BaseIT {
         WeatherResponse invalidDto = new WeatherResponse(
                 null,
                 "ABC",
-                LocalDateTime.now().plusMinutes(10),
+                OffsetDateTime.now().plusMinutes(10),
                 null,
                 25.0,
                 50.0,
@@ -103,14 +109,14 @@ class WeatherControllerIT extends BaseIT {
         String stationCode = "ABC";
         WeatherRequest dto1 = new WeatherRequest(
                 stationCode,
-                LocalDateTime.now().minusMinutes(20),
+                OffsetDateTime.now().minusMinutes(20),
                 22.0,
                 55.0,
                 10.0
         );
         WeatherRequest dto2 = new WeatherRequest(
                 stationCode,
-                LocalDateTime.now(),
+                OffsetDateTime.now(),
                 24.0,
                 50.0,
                 12.0
@@ -148,13 +154,13 @@ class WeatherControllerIT extends BaseIT {
     @Test
     void getAggregationByStationRange_ValidStation_ShouldReturnAggregatedData() {
         String stationCode = "ABC";
-        LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
+        OffsetDateTime now = OffsetDateTime.now().withSecond(0).withNano(0);
         WeatherResponse dto1 = new WeatherResponse(null, stationCode, now.minusMinutes(15), now.minusMinutes(15), 20.0, 50.0, 5.0);
         WeatherResponse dto2 = new WeatherResponse(null, stationCode, now.minusMinutes(15), now.minusMinutes(15), 22.0, 55.0, 7.0);
         restTemplate.postForEntity(buildBaseUri(), dto1, WeatherResponse.class);
         restTemplate.postForEntity(buildBaseUri(), dto2, WeatherResponse.class);
-        LocalDateTime start = now.minusMinutes(17);
-        LocalDateTime end = now.minusMinutes(14);
+        OffsetDateTime start = now.minusMinutes(17);
+        OffsetDateTime end = now.minusMinutes(14);
         String aggregationUrl = buildAggregationUriForStationRange(stationCode, start, end);
         ResponseEntity<WeatherAggregationResponse> response = restTemplate.getForEntity(aggregationUrl, WeatherAggregationResponse.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -183,18 +189,19 @@ class WeatherControllerIT extends BaseIT {
     @Test
     void getAggregationByStationRange_NoData_ShouldReturnNotFound() {
         String stationCode = "XYZ";
-        LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
-        LocalDateTime start = now.minusMinutes(17);
-        LocalDateTime end = now.minusMinutes(14);
+        OffsetDateTime now = OffsetDateTime.now().withSecond(0).withNano(0);
+        OffsetDateTime start = now.minusMinutes(17);
+        OffsetDateTime end = now.minusMinutes(14);
         String aggregationUrl = buildAggregationUriForStationRange(stationCode, start, end);
         ResponseEntity<String> response = restTemplate.getForEntity(aggregationUrl, String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
+
     @Test
     void getAggregationByStationRange_MultipleWindows_ShouldAggregateCorrectly() {
         String stationCode = "ABC";
-        LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC).withSecond(0).withNano(0);
 
         WeatherRequest entry1 = new WeatherRequest(
                 stationCode,
@@ -214,8 +221,8 @@ class WeatherControllerIT extends BaseIT {
         restTemplate.postForEntity(buildBaseUri(), entry1, WeatherResponse.class);
         restTemplate.postForEntity(buildBaseUri(), entry2, WeatherResponse.class);
 
-        LocalDateTime start = now.minusMinutes(23);
-        LocalDateTime end = now.minusMinutes(17);
+        OffsetDateTime start = now.minusMinutes(23);
+        OffsetDateTime end = now.minusMinutes(17);
         String aggregationUrl = buildAggregationUriForStationRange(stationCode, start, end);
 
         ResponseEntity<WeatherAggregationResponse> response = restTemplate.getForEntity(aggregationUrl, WeatherAggregationResponse.class);

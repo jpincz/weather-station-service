@@ -1,5 +1,6 @@
 package com.gamehouse.weather.service;
 
+
 import com.gamehouse.weather.dto.WeatherAggregationResponse;
 import com.gamehouse.weather.dto.WeatherRequest;
 import com.gamehouse.weather.dto.WeatherResponse;
@@ -14,7 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 @Service
 @RequiredArgsConstructor
@@ -27,13 +29,13 @@ public class WeatherService {
 
     @Transactional
     public WeatherResponse save(WeatherRequest request) {
-        LocalDateTime currentDate = LocalDateTime.now();
-        if (request.getCollectedAt().isAfter(currentDate)) {
+        OffsetDateTime currentDateUtc = OffsetDateTime.now(ZoneOffset.UTC);
+        if (request.getCollectedAt().isAfter(currentDateUtc)) {
             throw new IllegalArgumentException("Collected time must not be in the future.");
         }
 
         Weather entity = mapper.toEntity(request);
-        entity.setReceivedAt(LocalDateTime.now());
+        entity.setReceivedAt(currentDateUtc);
         Weather savedEntity = repository.save(entity);
         return mapper.toDto(savedEntity);
     }
@@ -46,7 +48,7 @@ public class WeatherService {
     }
 
     @Transactional(readOnly = true)
-    public WeatherAggregationResponse getAggregationByStationAndDateRange(String stationCode, LocalDateTime start, LocalDateTime end) {
+    public WeatherAggregationResponse getAggregationByStationAndDateRange(String stationCode, OffsetDateTime start, OffsetDateTime end) {
         WeatherAggregation aggregation = weatherAggregationRepository.aggregateByStationAndRange(stationCode, start, end);
         if (aggregation == null) {
             throw new EntityNotFoundException("No aggregated weather data found for station: " + stationCode + " in range " + start + " to " + end);

@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Data
 @NoArgsConstructor
@@ -20,8 +20,8 @@ public class WeatherRequest {
     private String stationCode;
 
     @NotNull(message = "Collected time is required")
-    @Schema(description = "Time at which weather data was collected", example = "2025-03-01T01:36:00", required = true)
-    private LocalDateTime collectedAt;
+    @Schema(description = "Time at which weather data was collected, with timezone offset", example = "2025-03-01T19:08:01.433+02:00", required = true)
+    private OffsetDateTime collectedAt;
 
     @NotNull(message = "Temperature is required")
     @Schema(description = "Temperature value in Celsius", example = "23.5", required = true)

@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public interface WeatherAggregationRepository extends JpaRepository<WeatherAggregation, WeatherAggregationId> {
 
@@ -23,6 +23,6 @@ public interface WeatherAggregationRepository extends JpaRepository<WeatherAggre
             "  AND w.minuteWindow BETWEEN :start AND :end " +
             "GROUP BY w.stationCode")
     WeatherAggregation aggregateByStationAndRange(@Param("stationCode") String stationCode,
-                                                  @Param("start") LocalDateTime start,
-                                                  @Param("end") LocalDateTime end);
+                                                  @Param("start") OffsetDateTime start,
+                                                  @Param("end") OffsetDateTime end);
 }

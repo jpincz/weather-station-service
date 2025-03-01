@@ -7,7 +7,7 @@ import com.gamehouse.weather.model.WeatherAggregationStats;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,7 +17,7 @@ class WeatherAggregationMapperTest {
 
     @Test
     void toDto_shouldMapEntityToDto() {
-        LocalDateTime time = LocalDateTime.now().withSecond(0).withNano(0);
+        OffsetDateTime time = OffsetDateTime.now().withSecond(0).withNano(0);
         WeatherAggregationStats temperature = new WeatherAggregationStats(21.0, 20.0, 22.0);
         WeatherAggregationStats humidity = new WeatherAggregationStats(52.5, 50.0, 55.0);
         WeatherAggregationStats windSpeed = new WeatherAggregationStats(6.0, 5.0, 7.0);

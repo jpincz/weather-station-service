@@ -11,7 +11,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,7 +41,7 @@ class WeatherAlertServiceIT extends BaseIT {
         System.setOut(originalOut);
     }
 
-    private Weather createDefaultWeather(String stationCode, LocalDateTime collectedAt, LocalDateTime receivedAt,
+    private Weather createDefaultWeather(String stationCode, OffsetDateTime collectedAt, OffsetDateTime receivedAt,
                                          double temperature, double humidity, double windSpeed) {
         Weather w = new Weather();
         w.setStationCode(stationCode);
@@ -55,7 +55,7 @@ class WeatherAlertServiceIT extends BaseIT {
 
     @Test
     void testAlertMissingDataIntegration() {
-        LocalDateTime now = LocalDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now();
         Weather w1 = createDefaultWeather("ABC", now.minusSeconds(31), now.minusSeconds(31), 20.0, 50.0, 5.0);
         weatherRepository.save(w1);
         Weather w2 = createDefaultWeather("XYZ", now.minusSeconds(10), now.minusSeconds(10), 22.0, 55.0, 6.0);
@@ -69,7 +69,7 @@ class WeatherAlertServiceIT extends BaseIT {
 
     @Test
     void testAlertTemperatureThresholdIntegration() {
-        LocalDateTime now = LocalDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now();
         Weather w1 = createDefaultWeather("AAA", now.minusSeconds(10), now.minusSeconds(10), 72.2, 50.0, 5.0);
         weatherRepository.save(w1);
         Weather w2 = createDefaultWeather("BBB", now.minusSeconds(10), now.minusSeconds(10), 68.0, 55.0, 6.0);

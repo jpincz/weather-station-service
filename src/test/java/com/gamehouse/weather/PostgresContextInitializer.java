@@ -16,7 +16,7 @@ public class PostgresContextInitializer implements ApplicationContextInitializer
         container.start();
 
         TestPropertyValues.of(
-                "spring.datasource.url=" + container.getJdbcUrl(),
+                "spring.datasource.url=" + container.getJdbcUrl() + "?options=-c%20TimeZone=UTC",
                 "spring.datasource.username=" + container.getUsername(),
                 "spring.datasource.password=" + container.getPassword()
         ).applyTo(applicationContext.getEnvironment());

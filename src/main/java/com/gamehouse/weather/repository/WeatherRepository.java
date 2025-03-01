@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +21,6 @@ public interface WeatherRepository extends JpaRepository<Weather, Long> {
             "WHERE station_code = :stationCode AND collected_at BETWEEN :start AND :end",
             nativeQuery = true)
     Double findStationAverageTemperatureBetween(@Param("stationCode") String stationCode,
-                                                @Param("start") LocalDateTime start,
-                                                @Param("end") LocalDateTime end);
+                                                @Param("start") OffsetDateTime start,
+                                                @Param("end") OffsetDateTime end);
 }

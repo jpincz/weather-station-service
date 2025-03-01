@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
@@ -14,5 +14,5 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class WeatherAggregationId implements Serializable {
     private String stationCode;
-    private LocalDateTime minuteWindow;
+    private OffsetDateTime minuteWindow;
 }

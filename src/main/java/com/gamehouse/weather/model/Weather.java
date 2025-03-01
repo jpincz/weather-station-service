@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Getter
@@ -28,10 +28,10 @@ public class Weather {
 
     @NotNull(message = "Collected time is required")
     @Column(nullable = false)
-    private LocalDateTime collectedAt;
+    private OffsetDateTime collectedAt;
 
     @Column(nullable = false)
-    private LocalDateTime receivedAt;
+    private OffsetDateTime receivedAt;
 
     @NotNull(message = "Temperature is required")
     @Column(nullable = false)

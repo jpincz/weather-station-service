@@ -4,10 +4,11 @@ import com.gamehouse.weather.BaseIT;
 import com.gamehouse.weather.model.WeatherAggregation;
 import com.gamehouse.weather.model.WeatherAggregationId;
 import com.gamehouse.weather.model.WeatherAggregationStats;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,9 +19,14 @@ class WeatherAggregationRepositoryIT extends BaseIT {
     @Autowired
     private WeatherAggregationRepository repository;
 
+    @BeforeEach
+    void setUp() {
+        repository.deleteAll();
+    }
+
     @Test
     void testSaveAndFindById() {
-        LocalDateTime time = LocalDateTime.now().withSecond(0).withNano(0);
+        OffsetDateTime time = OffsetDateTime.now().withSecond(0).withNano(0);
         WeatherAggregation aggregation = new WeatherAggregation(
                 "ABC",
                 time,
@@ -51,9 +57,9 @@ class WeatherAggregationRepositoryIT extends BaseIT {
     @Test
     void testAggregateByStationRange() {
         String stationCode = "ABC";
-        LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
-        LocalDateTime time1 = now.minusMinutes(10);
-        LocalDateTime time2 = now.minusMinutes(5);
+        OffsetDateTime now = OffsetDateTime.now().withSecond(0).withNano(0);
+        OffsetDateTime time1 = now.minusMinutes(11);
+        OffsetDateTime time2 = now.minusMinutes(6);
         WeatherAggregation agg1 = new WeatherAggregation(
                 stationCode,
                 time1,
@@ -72,8 +78,8 @@ class WeatherAggregationRepositoryIT extends BaseIT {
         );
         repository.save(agg1);
         repository.save(agg2);
-        LocalDateTime start = now.minusMinutes(12);
-        LocalDateTime end = now.minusMinutes(3);
+        OffsetDateTime start = now.minusMinutes(12);
+        OffsetDateTime end = now.minusMinutes(3);
         WeatherAggregation aggregated = repository.aggregateByStationAndRange(stationCode, start, end);
         assertThat(aggregated).isNotNull();
         assertThat(aggregated.getStationCode()).isEqualTo(stationCode);
@@ -92,7 +98,7 @@ class WeatherAggregationRepositoryIT extends BaseIT {
     @Test
     void testAggregateByStationAndRangeQuery() {
         String stationCode = "ABC";
-        LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
+        OffsetDateTime now = OffsetDateTime.now().withSecond(0).withNano(0);
         WeatherAggregation agg1 = new WeatherAggregation(
                 stationCode,
                 now.minusMinutes(10),
@@ -111,8 +117,8 @@ class WeatherAggregationRepositoryIT extends BaseIT {
         );
         repository.save(agg1);
         repository.save(agg2);
-        LocalDateTime start = now.minusMinutes(12);
-        LocalDateTime end = now.minusMinutes(3);
+        OffsetDateTime start = now.minusMinutes(12);
+        OffsetDateTime end = now.minusMinutes(3);
         WeatherAggregation result = repository.aggregateByStationAndRange(stationCode, start, end);
         assertThat(result).isNotNull();
         assertThat(result.getStationCode()).isEqualTo(stationCode);

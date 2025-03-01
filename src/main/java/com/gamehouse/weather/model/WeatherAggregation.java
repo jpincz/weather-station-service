@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @IdClass(WeatherAggregationId.class)
@@ -22,7 +22,7 @@ public class WeatherAggregation {
 
     @Id
     @Column(nullable = false)
-    private LocalDateTime minuteWindow;
+    private OffsetDateTime minuteWindow;
 
     @Column(nullable = false)
     private Long totalRecords;

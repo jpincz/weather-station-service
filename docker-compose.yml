@@ -7,7 +7,7 @@ services:
     depends_on:
       - db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/weather
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/weather?options=-c%20TimeZone=UTC
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
       - ALERT_TEMPERATURE_THRESHOLD=40

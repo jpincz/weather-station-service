@@ -10,7 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,8 +29,8 @@ public class WeatherTest {
     void validWeather_ShouldHaveNoViolations() {
         Weather weather = new Weather();
         weather.setStationCode("ABC");
-        weather.setCollectedAt(LocalDateTime.now().minusMinutes(5));
-        weather.setReceivedAt(LocalDateTime.now());
+        weather.setCollectedAt(OffsetDateTime.now().minusMinutes(5));
+        weather.setReceivedAt(OffsetDateTime.now());
         weather.setTemperature(25.5);
         weather.setHumidity(55.0);
         weather.setWindSpeed(12.3);
@@ -44,8 +44,8 @@ public class WeatherTest {
     void invalidStationCode_ShouldReturnViolation(String code) {
         Weather weather = new Weather();
         weather.setStationCode(code);
-        weather.setCollectedAt(LocalDateTime.now().minusMinutes(5));
-        weather.setReceivedAt(LocalDateTime.now());
+        weather.setCollectedAt(OffsetDateTime.now().minusMinutes(5));
+        weather.setReceivedAt(OffsetDateTime.now());
         weather.setTemperature(25.5);
         weather.setHumidity(55.0);
         weather.setWindSpeed(12.3);
@@ -84,8 +84,8 @@ public class WeatherTest {
     void testWindSpeedValidation(double windSpeed, boolean isValid) {
         Weather weather = new Weather();
         weather.setStationCode("ABC");
-        weather.setCollectedAt(LocalDateTime.now().minusMinutes(5));
-        weather.setReceivedAt(LocalDateTime.now());
+        weather.setCollectedAt(OffsetDateTime.now().minusMinutes(5));
+        weather.setReceivedAt(OffsetDateTime.now());
         weather.setTemperature(25.5);
         weather.setHumidity(55.0);
         weather.setWindSpeed(windSpeed);
@@ -105,8 +105,8 @@ public class WeatherTest {
     void testHumidityValidation(double humidity, boolean isValid) {
         Weather weather = new Weather();
         weather.setStationCode("ABC");
-        weather.setCollectedAt(LocalDateTime.now().minusMinutes(5));
-        weather.setReceivedAt(LocalDateTime.now());
+        weather.setCollectedAt(OffsetDateTime.now().minusMinutes(5));
+        weather.setReceivedAt(OffsetDateTime.now());
         weather.setTemperature(25.0);
         weather.setHumidity(humidity);
         weather.setWindSpeed(10.0);

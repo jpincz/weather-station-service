@@ -10,7 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,7 +28,7 @@ public class WeatherRequestTest {
     @Test
     void validWeatherDto_ShouldHaveNoViolations() {
         WeatherRequest dto = new WeatherRequest("ABC",
-                LocalDateTime.now(), 25.5, 55.0, 12.3);
+                OffsetDateTime.now(), 25.5, 55.0, 12.3);
 
         Set<ConstraintViolation<WeatherRequest>> violations = validator.validate(dto);
         assertThat(violations).isEmpty();
@@ -38,7 +38,7 @@ public class WeatherRequestTest {
     @ValueSource(strings = {"AB", "ABCD", "abc", "ABc"})
     void invalidStationCode_ShouldReturnViolation(String code) {
         WeatherRequest dto = new WeatherRequest(code,
-                LocalDateTime.now(), 25.5, 55.0, 12.3);
+                OffsetDateTime.now(), 25.5, 55.0, 12.3);
 
         Set<ConstraintViolation<WeatherRequest>> violations = validator.validate(dto);
         assertThat(violations).isNotEmpty();
@@ -73,7 +73,7 @@ public class WeatherRequestTest {
     })
     void testWindSpeedValidation(double windSpeed, boolean isValid) {
         WeatherRequest dto = new WeatherRequest("ABC",
-                LocalDateTime.now(), 25.5, 55.0, windSpeed);
+                OffsetDateTime.now(), 25.5, 55.0, windSpeed);
 
         Set<ConstraintViolation<WeatherRequest>> violations = validator.validate(dto);
         assertThat(violations.isEmpty()).isEqualTo(isValid);
@@ -89,7 +89,7 @@ public class WeatherRequestTest {
     })
     void testHumidityValidation(double humidity, boolean isValid) {
         WeatherRequest dto = new WeatherRequest("ABC",
-                LocalDateTime.now(), 25.0, humidity, 10.0);
+                OffsetDateTime.now(), 25.0, humidity, 10.0);
 
         Set<ConstraintViolation<WeatherRequest>> violations = validator.validate(dto);
         assertThat(violations.isEmpty()).isEqualTo(isValid);
