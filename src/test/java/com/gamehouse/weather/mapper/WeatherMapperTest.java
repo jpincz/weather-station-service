@@ -1,6 +1,8 @@
 package com.gamehouse.weather.mapper;
 
-import com.gamehouse.weather.dto.WeatherDto;
+import com.gamehouse.weather.dto.WeatherRequest;
+import com.gamehouse.weather.dto.WeatherResponse;
+import com.gamehouse.weather.dto.mapper.WeatherMapper;
 import com.gamehouse.weather.model.Weather;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -24,7 +26,7 @@ class WeatherMapperTest {
         entity.setHumidity(60.0);
         entity.setWindSpeed(12.3);
 
-        WeatherDto dto = mapper.toDto(entity);
+        WeatherResponse dto = mapper.toDto(entity);
 
         assertThat(dto).isNotNull();
         assertThat(dto.getId()).isEqualTo(entity.getId());
@@ -38,11 +40,9 @@ class WeatherMapperTest {
 
     @Test
     void shouldMapDtoToEntity() {
-        WeatherDto dto = new WeatherDto(
-                1L,
+        WeatherRequest dto = new WeatherRequest(
                 "ABC",
                 LocalDateTime.now().minusMinutes(5),
-                LocalDateTime.now(),
                 25.5,
                 60.0,
                 12.3
@@ -51,10 +51,8 @@ class WeatherMapperTest {
         Weather entity = mapper.toEntity(dto);
 
         assertThat(entity).isNotNull();
-        assertThat(entity.getId()).isEqualTo(dto.getId());
         assertThat(entity.getStationCode()).isEqualTo(dto.getStationCode());
         assertThat(entity.getCollectedAt()).isEqualTo(dto.getCollectedAt());
-        assertThat(entity.getReceivedAt()).isEqualTo(dto.getReceivedAt());
         assertThat(entity.getTemperature()).isEqualTo(dto.getTemperature());
         assertThat(entity.getHumidity()).isEqualTo(dto.getHumidity());
         assertThat(entity.getWindSpeed()).isEqualTo(dto.getWindSpeed());

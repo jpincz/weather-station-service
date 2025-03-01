@@ -1,8 +1,9 @@
 package com.gamehouse.weather.controller;
 
 import com.gamehouse.weather.BaseIT;
-import com.gamehouse.weather.dto.WeatherAggregationDto;
-import com.gamehouse.weather.dto.WeatherDto;
+import com.gamehouse.weather.dto.WeatherAggregationResponse;
+import com.gamehouse.weather.dto.WeatherRequest;
+import com.gamehouse.weather.dto.WeatherResponse;
 import com.gamehouse.weather.repository.WeatherAggregationRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,7 @@ class WeatherControllerIT extends BaseIT {
 
     @Test
     void save_Valid_ShouldReturn201() {
-        WeatherDto validDto = new WeatherDto(
+        WeatherResponse validDto = new WeatherResponse(
                 null,
                 "ABC",
                 LocalDateTime.now().minusMinutes(10),
@@ -67,8 +68,8 @@ class WeatherControllerIT extends BaseIT {
                 10.0
         );
 
-        ResponseEntity<WeatherDto> response = restTemplate.postForEntity(
-                buildBaseUri(), validDto, WeatherDto.class
+        ResponseEntity<WeatherResponse> response = restTemplate.postForEntity(
+                buildBaseUri(), validDto, WeatherResponse.class
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -79,7 +80,7 @@ class WeatherControllerIT extends BaseIT {
 
     @Test
     void save_Invalid_ShouldReturn400() {
-        WeatherDto invalidDto = new WeatherDto(
+        WeatherResponse invalidDto = new WeatherResponse(
                 null,
                 "ABC",
                 LocalDateTime.now().plusMinutes(10),
@@ -100,39 +101,39 @@ class WeatherControllerIT extends BaseIT {
     @Test
     void getLastByStation_ValidStation_ShouldReturn() {
         String stationCode = "ABC";
-        WeatherDto dto1 = new WeatherDto(
-                null,
+        WeatherRequest dto1 = new WeatherRequest(
                 stationCode,
                 LocalDateTime.now().minusMinutes(20),
-                LocalDateTime.now().minusMinutes(15),
                 22.0,
                 55.0,
                 10.0
         );
-        WeatherDto dto2 = new WeatherDto(
-                null,
+        WeatherRequest dto2 = new WeatherRequest(
                 stationCode,
-                LocalDateTime.now(),
                 LocalDateTime.now(),
                 24.0,
                 50.0,
                 12.0
         );
 
-        restTemplate.postForEntity(buildBaseUri(), dto1, WeatherDto.class);
-        restTemplate.postForEntity(buildBaseUri(), dto2, WeatherDto.class);
+        restTemplate.postForEntity(buildBaseUri(), dto1, WeatherResponse.class);
+        restTemplate.postForEntity(buildBaseUri(), dto2, WeatherResponse.class);
 
         String lastUrl = buildLatestWeatherUriForStationCode(stationCode);
 
-        ResponseEntity<WeatherDto> response = restTemplate.getForEntity(lastUrl, WeatherDto.class);
+        ResponseEntity<WeatherResponse> response = restTemplate.getForEntity(lastUrl, WeatherResponse.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        WeatherDto last = response.getBody();
+        WeatherResponse last = response.getBody();
         assertThat(last).isNotNull();
 
-        dto2.setId(last.getId());
-        dto2.setReceivedAt(last.getReceivedAt());
-        assertThat(last).isEqualTo(dto2);
+        assertThat(last.getId()).isNotNull();
+        assertThat(last.getReceivedAt()).isNotNull();
+        assertThat(last.getStationCode()).isEqualTo(dto2.getStationCode());
+        assertThat(last.getCollectedAt()).isEqualTo(dto2.getCollectedAt());
+        assertThat(last.getTemperature()).isEqualTo(dto2.getTemperature());
+        assertThat(last.getHumidity()).isEqualTo(dto2.getHumidity());
+        assertThat(last.getWindSpeed()).isEqualTo(dto2.getWindSpeed());
     }
 
     @Test
@@ -148,16 +149,16 @@ class WeatherControllerIT extends BaseIT {
     void getAggregationByStationRange_ValidStation_ShouldReturnAggregatedData() {
         String stationCode = "ABC";
         LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
-        WeatherDto dto1 = new WeatherDto(null, stationCode, now.minusMinutes(15), now.minusMinutes(15), 20.0, 50.0, 5.0);
-        WeatherDto dto2 = new WeatherDto(null, stationCode, now.minusMinutes(15), now.minusMinutes(15), 22.0, 55.0, 7.0);
-        restTemplate.postForEntity(buildBaseUri(), dto1, WeatherDto.class);
-        restTemplate.postForEntity(buildBaseUri(), dto2, WeatherDto.class);
+        WeatherResponse dto1 = new WeatherResponse(null, stationCode, now.minusMinutes(15), now.minusMinutes(15), 20.0, 50.0, 5.0);
+        WeatherResponse dto2 = new WeatherResponse(null, stationCode, now.minusMinutes(15), now.minusMinutes(15), 22.0, 55.0, 7.0);
+        restTemplate.postForEntity(buildBaseUri(), dto1, WeatherResponse.class);
+        restTemplate.postForEntity(buildBaseUri(), dto2, WeatherResponse.class);
         LocalDateTime start = now.minusMinutes(17);
         LocalDateTime end = now.minusMinutes(14);
         String aggregationUrl = buildAggregationUriForStationRange(stationCode, start, end);
-        ResponseEntity<WeatherAggregationDto> response = restTemplate.getForEntity(aggregationUrl, WeatherAggregationDto.class);
+        ResponseEntity<WeatherAggregationResponse> response = restTemplate.getForEntity(aggregationUrl, WeatherAggregationResponse.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        WeatherAggregationDto aggregationDto = response.getBody();
+        WeatherAggregationResponse aggregationDto = response.getBody();
         assertThat(aggregationDto).isNotNull();
         double expectedAvgTemp = 21.0;
         double expectedMinTemp = 20.0;
@@ -195,36 +196,32 @@ class WeatherControllerIT extends BaseIT {
         String stationCode = "ABC";
         LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
 
-        WeatherDto entry1 = new WeatherDto(
-                null,
+        WeatherRequest entry1 = new WeatherRequest(
                 stationCode,
-                now.minusMinutes(20).plusSeconds(20),
                 now.minusMinutes(20).plusSeconds(20),
                 20.0,
                 40.0,
                 5.0
         );
-        WeatherDto entry2 = new WeatherDto(
-                null,
+        WeatherRequest entry2 = new WeatherRequest(
                 stationCode,
-                now.minusMinutes(19).plusSeconds(20),
                 now.minusMinutes(19).plusSeconds(20),
                 22.0,
                 42.0,
                 6.0
         );
 
-        restTemplate.postForEntity(buildBaseUri(), entry1, WeatherDto.class);
-        restTemplate.postForEntity(buildBaseUri(), entry2, WeatherDto.class);
+        restTemplate.postForEntity(buildBaseUri(), entry1, WeatherResponse.class);
+        restTemplate.postForEntity(buildBaseUri(), entry2, WeatherResponse.class);
 
         LocalDateTime start = now.minusMinutes(23);
         LocalDateTime end = now.minusMinutes(17);
         String aggregationUrl = buildAggregationUriForStationRange(stationCode, start, end);
 
-        ResponseEntity<WeatherAggregationDto> response = restTemplate.getForEntity(aggregationUrl, WeatherAggregationDto.class);
+        ResponseEntity<WeatherAggregationResponse> response = restTemplate.getForEntity(aggregationUrl, WeatherAggregationResponse.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        WeatherAggregationDto aggregationDto = response.getBody();
+        WeatherAggregationResponse aggregationDto = response.getBody();
         assertThat(aggregationDto).isNotNull();
 
         assertThat(aggregationDto.getTemperature().getAvg()).isCloseTo(21.0, within(0.1));

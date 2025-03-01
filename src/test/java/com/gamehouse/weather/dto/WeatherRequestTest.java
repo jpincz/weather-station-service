@@ -15,7 +15,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class WeatherDtoTest {
+public class WeatherRequestTest {
 
     private static Validator validator;
 
@@ -27,20 +27,20 @@ public class WeatherDtoTest {
 
     @Test
     void validWeatherDto_ShouldHaveNoViolations() {
-        WeatherDto dto = new WeatherDto(1L, "ABC", LocalDateTime.now().minusMinutes(5),
+        WeatherRequest dto = new WeatherRequest("ABC",
                 LocalDateTime.now(), 25.5, 55.0, 12.3);
 
-        Set<ConstraintViolation<WeatherDto>> violations = validator.validate(dto);
+        Set<ConstraintViolation<WeatherRequest>> violations = validator.validate(dto);
         assertThat(violations).isEmpty();
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"AB", "ABCD"})
     void invalidStationCode_ShouldReturnViolation(String code) {
-        WeatherDto dto = new WeatherDto(1L, code, LocalDateTime.now().minusMinutes(5),
+        WeatherRequest dto = new WeatherRequest(code,
                 LocalDateTime.now(), 25.5, 55.0, 12.3);
 
-        Set<ConstraintViolation<WeatherDto>> violations = validator.validate(dto);
+        Set<ConstraintViolation<WeatherRequest>> violations = validator.validate(dto);
         assertThat(violations).isNotEmpty();
         assertThat(violations)
                 .anyMatch(v -> v.getPropertyPath().toString().equals("stationCode"));
@@ -48,9 +48,9 @@ public class WeatherDtoTest {
 
     @Test
     void missingFields_ShouldReturnViolations() {
-        WeatherDto dto = new WeatherDto(null, null, null, null, null, null, null);
+        WeatherRequest dto = new WeatherRequest(null, null, null, null, null);
 
-        Set<ConstraintViolation<WeatherDto>> violations = validator.validate(dto);
+        Set<ConstraintViolation<WeatherRequest>> violations = validator.validate(dto);
         assertThat(violations).hasSize(5);
         assertThat(violations)
                 .extracting(v -> v.getPropertyPath().toString())
@@ -72,10 +72,10 @@ public class WeatherDtoTest {
             "1001.0, true"
     })
     void testWindSpeedValidation(double windSpeed, boolean isValid) {
-        WeatherDto dto = new WeatherDto(1L, "ABC", LocalDateTime.now().minusMinutes(5),
+        WeatherRequest dto = new WeatherRequest("ABC",
                 LocalDateTime.now(), 25.5, 55.0, windSpeed);
 
-        Set<ConstraintViolation<WeatherDto>> violations = validator.validate(dto);
+        Set<ConstraintViolation<WeatherRequest>> violations = validator.validate(dto);
         assertThat(violations.isEmpty()).isEqualTo(isValid);
     }
 
@@ -88,10 +88,10 @@ public class WeatherDtoTest {
             "100.1, false"
     })
     void testHumidityValidation(double humidity, boolean isValid) {
-        WeatherDto dto = new WeatherDto(1L, "ABC", LocalDateTime.now().minusMinutes(5),
+        WeatherRequest dto = new WeatherRequest("ABC",
                 LocalDateTime.now(), 25.0, humidity, 10.0);
 
-        Set<ConstraintViolation<WeatherDto>> violations = validator.validate(dto);
+        Set<ConstraintViolation<WeatherRequest>> violations = validator.validate(dto);
         assertThat(violations.isEmpty()).isEqualTo(isValid);
     }
 }

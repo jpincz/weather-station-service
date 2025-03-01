@@ -1,7 +1,8 @@
 package com.gamehouse.weather.controller;
 
-import com.gamehouse.weather.dto.WeatherAggregationDto;
-import com.gamehouse.weather.dto.WeatherDto;
+import com.gamehouse.weather.dto.WeatherAggregationResponse;
+import com.gamehouse.weather.dto.WeatherRequest;
+import com.gamehouse.weather.dto.WeatherResponse;
 import com.gamehouse.weather.service.WeatherService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,17 +21,17 @@ public class WeatherController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public WeatherDto save(@RequestBody @Valid WeatherDto dto) {
-        return service.save(dto);
+    public WeatherResponse save(@RequestBody @Valid WeatherRequest request) {
+        return service.save(request);
     }
 
     @GetMapping("/{stationCode}/last")
-    public WeatherDto getLastByStation(@PathVariable String stationCode) {
+    public WeatherResponse getLastByStation(@PathVariable String stationCode) {
         return service.getLastByStation(stationCode);
     }
 
     @GetMapping("/{stationCode}/range")
-    public WeatherAggregationDto getAggregationByStationAndDateRange(
+    public WeatherAggregationResponse getAggregationByStationAndDateRange(
             @PathVariable String stationCode,
             @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {

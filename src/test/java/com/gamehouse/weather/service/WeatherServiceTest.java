@@ -1,7 +1,8 @@
 package com.gamehouse.weather.service;
 
-import com.gamehouse.weather.dto.WeatherDto;
-import com.gamehouse.weather.mapper.WeatherMapper;
+import com.gamehouse.weather.dto.WeatherRequest;
+import com.gamehouse.weather.dto.WeatherResponse;
+import com.gamehouse.weather.dto.mapper.WeatherMapper;
 import com.gamehouse.weather.model.Weather;
 import com.gamehouse.weather.repository.WeatherRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -33,54 +34,73 @@ class WeatherServiceTest {
 
     @Test
     void save_Valid_ShouldReturnDto() {
-        WeatherDto validDto = new WeatherDto(
-                null,
+        WeatherRequest request = new WeatherRequest(
                 "ABC",
                 LocalDateTime.now().minusMinutes(10),
-                LocalDateTime.now(),
                 25.0,
                 50.0,
                 10.0
         );
-
-        Weather entity = new Weather(
+        Weather unsavedEntity = new Weather(
                 null,
-                "ABC",
-                validDto.getCollectedAt(),
-                validDto.getReceivedAt(),
-                validDto.getTemperature(),
-                validDto.getHumidity(),
-                validDto.getWindSpeed()
+                request.getStationCode(),
+                request.getCollectedAt(),
+                null,
+                request.getTemperature(),
+                request.getHumidity(),
+                request.getWindSpeed()
+        );
+        Weather savedEntity = new Weather(
+                1L,
+                request.getStationCode(),
+                request.getCollectedAt(),
+                LocalDateTime.now(),
+                request.getTemperature(),
+                request.getHumidity(),
+                request.getWindSpeed()
+        );
+        WeatherResponse responseDto = new WeatherResponse(
+                1L,
+                request.getStationCode(),
+                request.getCollectedAt(),
+                savedEntity.getReceivedAt(),
+                request.getTemperature(),
+                request.getHumidity(),
+                request.getWindSpeed()
         );
 
-        when(mapper.toEntity(any(WeatherDto.class))).thenReturn(entity);
-        when(repository.save(any(Weather.class))).thenReturn(entity);
-        when(mapper.toDto(any(Weather.class))).thenReturn(validDto);
+        when(mapper.toEntity(request)).thenReturn(unsavedEntity);
+        when(repository.save(any(Weather.class))).thenReturn(savedEntity);
+        when(mapper.toDto(savedEntity)).thenReturn(responseDto);
 
-        WeatherDto result = service.save(validDto);
+        WeatherResponse result = service.save(request);
 
         assertThat(result).isNotNull();
-        assertThat(result.getStationCode()).isEqualTo(validDto.getStationCode());
+        assertThat(result.getStationCode()).isEqualTo(request.getStationCode());
+        assertThat(result.getCollectedAt()).isEqualTo(request.getCollectedAt());
+        assertThat(result.getTemperature()).isEqualTo(request.getTemperature());
+        assertThat(result.getHumidity()).isEqualTo(request.getHumidity());
+        assertThat(result.getWindSpeed()).isEqualTo(request.getWindSpeed());
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getReceivedAt()).isNotNull();
 
-        verify(repository, times(1)).save(entity);
+        verify(mapper).toEntity(request);
+        verify(repository).save(unsavedEntity);
+        verify(mapper).toDto(savedEntity);
     }
 
     @Test
     void save_InvalidCollectedAtField_ShouldThrowException() {
-        WeatherDto dtoWithInvalidDates = new WeatherDto(
-                null,
+        WeatherRequest request = new WeatherRequest(
                 "ABC",
                 LocalDateTime.now().plusMinutes(10),
-                LocalDateTime.now().minusMinutes(10),
                 25.0,
                 50.0,
                 10.0
         );
-
-        assertThatThrownBy(() -> service.save(dtoWithInvalidDates))
+        assertThatThrownBy(() -> service.save(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Collected time must not be in the future.");
-
         verify(repository, never()).save(any());
     }
 
@@ -98,7 +118,7 @@ class WeatherServiceTest {
                 55.0,
                 8.0
         );
-        WeatherDto expectedDto = new WeatherDto(
+        WeatherResponse responseDto = new WeatherResponse(
                 1L,
                 stationCode,
                 collectedAt,
@@ -110,14 +130,17 @@ class WeatherServiceTest {
 
         when(repository.findFirstByStationCodeOrderByReceivedAtDesc(stationCode))
                 .thenReturn(Optional.of(weather));
-        when(mapper.toDto(weather)).thenReturn(expectedDto);
+        when(mapper.toDto(weather)).thenReturn(responseDto);
 
-        WeatherDto result = service.getLastByStation(stationCode);
+        WeatherResponse result = service.getLastByStation(stationCode);
 
         assertThat(result).isNotNull();
         assertThat(result.getStationCode()).isEqualTo(stationCode);
-        verify(repository, times(1)).findFirstByStationCodeOrderByReceivedAtDesc(stationCode);
-        verify(mapper, times(1)).toDto(weather);
+        assertThat(result.getCollectedAt()).isEqualTo(collectedAt);
+        assertThat(result.getReceivedAt()).isEqualTo(receivedAt);
+
+        verify(repository).findFirstByStationCodeOrderByReceivedAtDesc(stationCode);
+        verify(mapper).toDto(weather);
     }
 
     @Test
@@ -129,6 +152,6 @@ class WeatherServiceTest {
         assertThatThrownBy(() -> service.getLastByStation(stationCode))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessage("No weather entry found for station: " + stationCode);
-        verify(repository, times(1)).findFirstByStationCodeOrderByReceivedAtDesc(stationCode);
+        verify(repository).findFirstByStationCodeOrderByReceivedAtDesc(stationCode);
     }
 }
