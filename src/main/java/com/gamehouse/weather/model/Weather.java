@@ -1,11 +1,11 @@
 package com.gamehouse.weather.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.*;
+import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -22,6 +22,7 @@ public class Weather {
 
     @NotNull(message = "Station code is required")
     @Size(min = 3, max = 3, message = "Station code must be exactly 3 characters")
+    @Pattern(regexp = "^[A-Z]{3}$", message = "Station code must be exactly 3 uppercase letters (e.g., ABC)")
     @Column(nullable = false, length = 3)
     private String stationCode;
 

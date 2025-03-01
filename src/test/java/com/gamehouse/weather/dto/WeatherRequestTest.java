@@ -35,7 +35,7 @@ public class WeatherRequestTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"AB", "ABCD"})
+    @ValueSource(strings = {"AB", "ABCD", "abc", "ABc"})
     void invalidStationCode_ShouldReturnViolation(String code) {
         WeatherRequest dto = new WeatherRequest(code,
                 LocalDateTime.now(), 25.5, 55.0, 12.3);

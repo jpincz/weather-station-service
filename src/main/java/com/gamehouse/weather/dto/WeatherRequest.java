@@ -1,10 +1,7 @@
 package com.gamehouse.weather.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +15,7 @@ public class WeatherRequest {
 
     @NotNull(message = "Station code is required")
     @Size(min = 3, max = 3, message = "Station code must be exactly 3 characters")
+    @Pattern(regexp = "^[A-Z]{3}$", message = "Station code must be exactly 3 uppercase letters (e.g., ABC)")
     @Schema(description = "Three-letter station code", example = "ABC", required = true)
     private String stationCode;
 

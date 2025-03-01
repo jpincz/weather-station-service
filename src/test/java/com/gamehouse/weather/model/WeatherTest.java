@@ -40,7 +40,7 @@ public class WeatherTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"AB", "ABCD"})
+    @ValueSource(strings = {"AB", "ABCD", "abc", "ABc"})
     void invalidStationCode_ShouldReturnViolation(String code) {
         Weather weather = new Weather();
         weather.setStationCode(code);
